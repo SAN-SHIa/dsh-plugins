@@ -1,0 +1,16 @@
+{
+  "name": "sanshi-dsh-plugins",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "author": "SAN-SHIa",
+  "engines": {"node": ">=22"},
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "build": "npm run build --workspace=dsh-sanshi-ui-enhancements",
+    "test": "npm run test --workspaces",
+    "check": "npm run build && node scripts/check-release.js && npm test",
+    "pack:plugins": "node scripts/pack.js"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "DeepSeek 搜索",
+    "description": "通过 DeepSeek 搜索网页、抓取网页正文。关闭插件即移除两个工具。复用现有 API 凭据，调用可能产生 API 费用。"
+  }
+}

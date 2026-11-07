@@ -1,0 +1,9 @@
+- insert:
+    - id: local-ui-enhancements
+      name: 'dsh-sanshi-ui-enhancements'
+      config:
+        typographySessions: true
+        sidebarGlass: true
+        fileTooltips: true
+        closePriority: true
+        sidechatShortcut: true
