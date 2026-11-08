@@ -4,7 +4,7 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 
 const root = new URL('../', import.meta.url);
-for (const folder of ['ui-enhancements', 'deepseek-search']) {
+for (const folder of ['ui-enhancements', 'deepseek-search', 'session-auto-name']) {
   const base = new URL(`packages/${folder}/`, root);
   const manifest = JSON.parse(await readFile(new URL('package.json', base), 'utf8'));
   assert.equal(manifest.license, 'MIT');

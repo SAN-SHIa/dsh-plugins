@@ -1,0 +1,10 @@
+- id: session-title-llm
+  disabled: true
+- insert:
+    - id: sanshi-session-auto-name
+      name: 'dsh-session-auto-name'
+      config:
+        timeZone: Asia/Shanghai
+        maxInputCharacters: 6000
+        maxTopicCharacters: 32
+        timeoutMs: 30000
