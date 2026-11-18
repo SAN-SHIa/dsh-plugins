@@ -63,7 +63,7 @@ test('plugin unload removes both registrations', async () => {
   const disposers = [];
   const ctx = { credentials, tools: { register(def) { registry.set(def.name, def); return () => registry.delete(def.name); } }, effect(callback) { const dispose = callback(); disposers.push(dispose); return dispose; } };
   await apply(ctx);
-  assert.equal(registry.size, 2);
+  assert.deepEqual([...registry.keys()].sort(), ['deepseek_fetch', 'deepseek_web_search']);
   for (const dispose of disposers.reverse()) dispose();
   assert.equal(registry.size, 0);
 });

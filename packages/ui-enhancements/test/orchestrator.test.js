@@ -10,7 +10,7 @@ function setup(value) {
   let snapshot = arguments.length === 0 ? {} : value;
   const forks = [], cleanups = [];
   vm.runInNewContext(source, {window: {__ModuleLoader__: {load(definition) {
-    assert.equal(definition.id, 'dsh-sanshi-ui-enhancements');
+    assert.equal(definition.id, 'dsh-ui-enhancements');
     plugin = definition.factory(() => ({}));
   }}}});
   plugin.apply({

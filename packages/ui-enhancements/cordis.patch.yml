@@ -1,6 +1,6 @@
 - insert:
     - id: local-ui-enhancements
-      name: 'dsh-sanshi-ui-enhancements'
+      name: 'dsh-ui-enhancements'
       config:
         typographySessions: true
         sidebarGlass: true

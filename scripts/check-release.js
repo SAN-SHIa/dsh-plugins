@@ -4,11 +4,17 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 
 const root = new URL('../', import.meta.url);
-for (const folder of ['ui-enhancements', 'deepseek-search', 'session-auto-name']) {
+// Naming applies to every workspace, including packages not distributed in releases.
+for (const dir of await readdir(new URL('packages/', root), {withFileTypes: true})) {
+  if (!dir.isDirectory()) continue;
+  const manifest = JSON.parse(await readFile(new URL(`packages/${dir.name}/package.json`, root), 'utf8'));
+  assert.equal(manifest.name, `dsh-${dir.name}`, 'Use the functional directory name without a personal prefix');
+}
+for (const folder of ['ui-enhancements', 'deepseek-search', 'session-auto-name', 'workspace-drop']) {
   const base = new URL(`packages/${folder}/`, root);
   const manifest = JSON.parse(await readFile(new URL('package.json', base), 'utf8'));
   assert.equal(manifest.license, 'MIT');
-  assert.ok(!manifest.private && !manifest.name.startsWith('@local/'));
+  assert.ok(!manifest.private);
   await readFile(new URL('LICENSE', base));
   const patch = await readFile(new URL('cordis.patch.yml', base), 'utf8');
   assert.ok(patch.includes(`name: '${manifest.name}'`));

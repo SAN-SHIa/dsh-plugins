@@ -28,6 +28,7 @@ test('provider wiring updates two successive turns and releases registration', a
   const ctx = harness();
   apply(ctx, config);
   assert.deepEqual(inject, ['sessionTitle', 'llm']);
+  assert.equal(ctx.provider.id, 'dsh-session-auto-name');
   assert.equal(ctx.provider.automatic, 'all-prompts');
   const session = {header: {}, id: 'fixture', seq: 10, eventAt: () => ({type: 'step/start'})};
   const request = {session, route: {provider: 'test', model: 'test'}, signal: new AbortController().signal};

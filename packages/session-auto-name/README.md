@@ -15,7 +15,7 @@
 
 插件包名为 `dsh-session-auto-name`。在仓库根目录运行 `npm run pack:plugins` 生成 `dsh-session-auto-name-1.0.0.tgz`，再交给 Harness Plugin Manager 安装，或直接安装本目录。本 bundle 会禁用默认 `session-title-llm` provider，因为原生服务只允许一个 provider。
 
-若已安装旧包 `dsh-sanshi-session-auto-name`，请先停用并移除旧 bundle，再安装新包。内部 entry/provider ID 保持不变，不要同时启用新旧两包。
+从旧版迁移时，先记下自定义配置并停用旧 bundle，再替换为新版。新版使用 `dsh-session-auto-name` 作为 entry 和标题 provider ID；请在新条目上重新应用需要的配置，不要同时启用两个标题 provider。
 
 在插件管理器关闭本插件即可停止更新。若需恢复默认首条消息命名，停用整个 bundle，或停用本插件后重新启用 `session-title-llm`。不要同时启用两个标题 provider。
 

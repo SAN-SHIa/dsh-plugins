@@ -1,5 +1,5 @@
 {
-  "name": "dsh-sanshi-ui-enhancements",
+  "name": "dsh-ui-enhancements",
   "version": "1.0.0",
   "type": "module",
   "description": "Local sidebar typography, navigation, glass, file tooltips, and Side Chat enhancements",
@@ -42,7 +42,6 @@
     }
   },
   "license": "MIT",
-  "author": "SAN-SHIa",
   "engines": {
     "node": ">=22"
   },

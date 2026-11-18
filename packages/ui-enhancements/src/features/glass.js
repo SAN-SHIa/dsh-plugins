@@ -1,22 +1,33 @@
 export function createFeature(require) {
     const React = require('react');
-    // This Desktop release already enables BrowserWindow vibrancy: sidebar.
-    // Only expose it in the ordinary macOS sidebar; keep drawers and content opaque.
-    // CSS-module class names are tied to the inspected 0.2.2-rc.1 build.
+    // Desktop 0.2.2-rc.3 supplies native vibrancy and paints the content columns.
+    // Keep the material on one surface, not on every row (or the whole window).
+    const frame = '.PIRFFq_frame:not([data-sidebar-drawer]):not([data-sidebar-collapsed])';
+    const desktop = 'html[data-platform="darwin"]';
+    const column = `${desktop} ${frame} > .PIRFFq_sidebarCol`;
+    const session = '[role="treeitem"]:is([data-row-key^="session:"], .JoiKIa_searchResultRow)';
     const css = `
-      @media (min-width: 768px) {
-        html[data-platform="darwin"], html[data-platform="darwin"] body,
-        html[data-platform="darwin"] #root { background: transparent !important; }
-        html[data-platform="darwin"] .PIRFFq_frame { background: transparent !important; }
-        html[data-platform="darwin"] .PIRFFq_frame:not([data-sidebar-drawer]) .PIRFFq_sidebarCol {
-          background: color-mix(in srgb, var(--dsw-specific-sidebar-fill) 75%, transparent) !important;
-        }
-        html[data-platform="darwin"] .PIRFFq_frame:not([data-sidebar-drawer]) .kB3qhq_root {
+      @media (min-width: 768px) and (prefers-reduced-transparency: no-preference)
+        and (prefers-contrast: no-preference) and (forced-colors: none) {
+        /* Only the backdrop needs an ancestor guard for third-party skins.
+           Hover and selection match the column directly, not the document state. */
+        ${desktop}:has(${frame}) :is(body, #root), ${desktop}:has(${frame}), ${desktop} ${frame} {
           background: transparent !important;
         }
-        html[data-platform="darwin"] .PIRFFq_centerCol,
-        html[data-platform="darwin"] .PIRFFq_bottomRow {
-          background: var(--dsw-alias-bg-base) !important;
+        ${column} {
+          background: linear-gradient(155deg,
+              var(--dsw-specific-sidebar-wash-top, transparent), transparent 44%,
+              transparent 72%, var(--dsw-specific-sidebar-wash-bottom, transparent)),
+            color-mix(in srgb, var(--dsw-specific-sidebar-fill) 40%, transparent) !important;
+        }
+        ${column} .kB3qhq_root { background: transparent !important; }
+        @media (hover: hover) {
+          ${column} ${session}:not([aria-selected="true"]):hover {
+            background-color: color-mix(in srgb, var(--dsw-alias-label-primary) 7%, transparent) !important;
+          }
+        }
+        ${column} ${session}[aria-selected="true"] {
+          background-color: color-mix(in srgb, var(--dsw-alias-brand-primary) 18%, transparent) !important;
         }
       }
     `;

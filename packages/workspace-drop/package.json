@@ -1,0 +1,15 @@
+{
+  "name": "dsh-workspace-drop",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Copy files dropped from Finder into the current local workspace without overwriting existing files",
+  "license": "MIT",
+  "exports": {".": "./src/host.js", "./client": "./client.js", "./icon": "./icon.svg", "./locale/*.json": "./locale/*.json"},
+  "files": ["src/", "client.js", "cordis.patch.yml", "icon.svg", "locale/*.json", "README.md", "LICENSE", "scripts/"],
+  "scripts": {"build": "node scripts/build.js", "test": "node --test test/*.test.js"},
+  "dsh": {
+    "bundle": {"patch": "./cordis.patch.yml"},
+    "client": {"platform": "web", "immediately": true, "inject": ["@deepseek-ai/dsh-client-ui-conversation", "@deepseek-ai/dsh-client-file-upload", "@deepseek-ai/dsh-client-locale"]}
+  },
+  "engines": {"node": ">=22"}
+}

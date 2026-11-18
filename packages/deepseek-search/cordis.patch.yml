@@ -1,6 +1,6 @@
 - insert:
-    - id: sanshi-deepseek-search
-      name: 'dsh-sanshi-deepseek-search'
+    - id: dsh-deepseek-search
+      name: 'dsh-deepseek-search'
       config:
         credentialRef: DEEPSEEK_SEARCH_API_KEY
         importCodexCredential: false

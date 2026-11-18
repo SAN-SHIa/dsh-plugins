@@ -1,0 +1,134 @@
+export function createPlugin(require) {
+  const React = require('react');
+  const h = React.createElement;
+  const namespace = 'workspace-drop';
+  return {
+    inject: ['slots', 'locale', 'fileUpload', 'remote'],
+    apply(ctx) {
+      ctx.locale.register(namespace, 'en', {
+        hint: 'Drop files anywhere to copy into this workspace',
+        importing: 'Importing files into workspace…',
+        done: 'Imported into workspace',
+        directory: 'Folders are not supported yet. Drop individual files.',
+        failed: 'Import failed',
+        close: 'Dismiss',
+        busy: 'An import is already running. Please wait.',
+      });
+      ctx.locale.register(namespace, 'zh', {
+        hint: '拖入文件即可复制到当前 workspace',
+        importing: '正在导入文件到 workspace…',
+        done: '已导入 workspace',
+        directory: '暂不支持文件夹，请拖入单个或多个文件。',
+        failed: '导入失败',
+        close: '关闭',
+        busy: '已有导入任务正在进行，请稍后重试。',
+      });
+      const t = ctx.locale.bind(namespace);
+      const operations = new Set();
+      const controllers = new Set();
+      const watchers = new Set();
+      let notice = '';
+      let active = false;
+      let disposed = false;
+      const notify = text => { if (!disposed) { notice = text; for (const fn of watchers) fn(); } };
+      const source = {
+        getSnapshot: () => notice,
+        subscribe: fn => { watchers.add(fn); return () => watchers.delete(fn); },
+      };
+      function Notice() {
+        const text = React.useSyncExternalStore(source.subscribe, source.getSnapshot);
+        if (!text) return null;
+        return h('div', {role: 'status', style: {
+          position: 'fixed', bottom: 24, right: 24, maxWidth: 'min(520px, calc(100vw - 48px))',
+          whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', padding: '12px 16px', borderRadius: 10,
+          background: 'var(--dsw-alias-bg-overlay)', color: 'var(--dsw-alias-label-primary)',
+          border: '1px solid var(--dsw-alias-border-l2)', pointerEvents: 'auto', fontSize: 13,
+        }}, text, h('button', {type: 'button', 'aria-label': t('close'), onClick: () => notify(''),
+          style: {marginLeft: 12, cursor: 'pointer', color: 'inherit', background: 'transparent', border: 0}}, '×'));
+      }
+      function DropCoordinator(props) {
+        const canUpload = props.useAccess('fileUploads/upload');
+        const canCommand = props.useAccess('commands/execute');
+        const allowed = canUpload && canCommand;
+        const [language, setLanguage] = React.useState(ctx.locale.getLocale());
+        React.useEffect(() => ctx.locale.subscribe(() => setLanguage(ctx.locale.getLocale())), []);
+        React.useEffect(() => {
+          if (!allowed) return;
+          const dropped = event => {
+            const transfer = event.dataTransfer;
+            if (!transfer || !Array.from(transfer.types).includes('Files') || Array.from(transfer.types).includes('application/x-dsh-file')) return;
+            // Snapshot the native File objects synchronously while the drop store is readable.
+            const items = Array.from(transfer.items ?? []);
+            const files = Array.from(transfer.files);
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            if (active) { notify(t('busy')); return; }
+            if (items.some(item => item.kind === 'file' && item.webkitGetAsEntry?.()?.isDirectory)) {
+              notify(t('directory')); return;
+            }
+            if (!files.length) return;
+            const controller = new AbortController();
+            controllers.add(controller);
+            active = true;
+            const sessionId = props.sessionId;
+            const operation = (async () => {
+              const results = [];
+              const failures = [];
+              notify(t('importing'));
+              const target = await ctx.remote.commands.execute(sessionId, '/workspace-import-target', [], controller.signal);
+              if (!target.ok) throw target.error;
+              if (target.value?.result.kind !== 'success') throw new Error('Workspace unavailable');
+              const workspace = target.value.result.text;
+              // One file at a time bounds memory and preserves drop order.
+              for (const file of files) {
+                controller.signal.throwIfAborted();
+                try {
+                  const uploaded = await ctx.fileUpload.upload(sessionId, file, file.name, controller.signal);
+                  if (!uploaded.ok) throw uploaded.error;
+                  const command = await ctx.remote.commands.execute(sessionId,
+                    `/workspace-import-files ${JSON.stringify({receiptIds: [uploaded.value.receiptId], workspace})}`, [], controller.signal);
+                  if (!command.ok) throw command.error;
+                  if (!command.value || command.value.result.kind !== 'success') throw new Error(command.value?.result.text ?? 'Import command unavailable');
+                  const result = JSON.parse(command.value.result.text);
+                  results.push(...result.files);
+                  failures.push(...result.failures);
+                } catch (error) {
+                  if (controller.signal.aborted) throw error;
+                  failures.push({name: file.name, error: error.message});
+                }
+              }
+              notify([
+                ...(results.length ? [t('done'), ...results.map(file => file.path)] : []),
+                ...(failures.length ? [t('failed'), ...failures.map(file => `${file.name}: ${file.error}`)] : []),
+              ].join('\n'));
+            })().catch(error => { if (!controller.signal.aborted) notify(`${t('failed')}: ${error.message}`); })
+              .finally(() => { active = false; operations.delete(operation); controllers.delete(controller); });
+            operations.add(operation);
+          };
+          const drag = event => {
+            const types = Array.from(event.dataTransfer?.types ?? []);
+            if (!types.includes('Files') || types.includes('application/x-dsh-file')) return;
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            if (event.type === 'dragover') event.dataTransfer.dropEffect = active ? 'none' : 'copy';
+          };
+          // Own the whole external drag lifecycle so the shipped attachment
+          // overlay cannot become stuck after its drop handler is bypassed.
+          const listeners = [['dragenter', drag], ['dragover', drag], ['dragleave', drag], ['drop', dropped]];
+          for (const [name, listener] of listeners) window.addEventListener(name, listener, true);
+          return () => {
+            for (const [name, listener] of listeners) window.removeEventListener(name, listener, true);
+          };
+        }, [props.sessionId, allowed, language]);
+        return allowed ? h('span', {style: {fontSize: 11, color: 'var(--dsw-alias-label-secondary)'}}, t('hint')) : null;
+      }
+      ctx.effect(() => () => {
+        disposed = true;
+        for (const controller of controllers) controller.abort();
+        watchers.clear();
+      });
+      ctx.slots.inject('shell.overlay', () => ctx.slots.register({name: 'shell.overlay', id: 'workspace-drop.notice', order: 90}, Notice));
+      ctx.slots.inject('conversation.composer.dock', () => ctx.slots.register({name: 'conversation.composer.dock', id: 'workspace-drop', order: 20}, DropCoordinator));
+    },
+  };
+}

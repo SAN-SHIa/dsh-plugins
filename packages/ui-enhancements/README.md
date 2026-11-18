@@ -1,14 +1,14 @@
 # DSH UI Enhancements
 
-**Experimental: targets DSH `0.2.2-rc.1`, with macOS Desktop-specific shortcuts and glass.** Package: `dsh-sanshi-ui-enhancements`. MIT licensed.
+**Experimental: originally targeted DSH `0.2.2-rc.1`; sidebar styles were updated against `0.2.2-rc.3`. Default shortcuts and glass are macOS Desktop-specific.** Package: `dsh-ui-enhancements`. MIT licensed.
 
 ## Features / 功能
 
 | Setting (default: enabled) | Behavior |
 | --- | --- |
-| `typographySessions` | Sidebar session/search titles: PingFang SC, 15 px / 22 px. Command + 1/2/3 opens the first three rendered sessions in current order. 正文、项目标题和时间戳不变。 |
+| `typographySessions` | System UI font, 14 px, weight 400. Session and search titles use a 20 px line height; project titles use 21 px. Light-mode titles are slightly darker. Command + 1/2/3 opens the first three rendered sessions in current order. 正文和时间戳大小不变。 |
 | `sidebarGlass` | Reveals native macOS Desktop sidebar vibrancy in wide-screen layout; content and drawers stay opaque. 仅原生 macOS 桌面毛玻璃。 |
-| `fileTooltips` | Shows local link target paths after 100 ms of hover; external web links excluded. 本地文件链接路径提示。 |
+| `fileTooltips` | Shows local file and DSH file-resource paths after 100 ms of hover; scrolling is monitored only while a tooltip is pending or visible. 本地文件链接路径提示。 |
 | `closePriority` | Existing close-page command first closes the right sidebar page or collapses the sidebar, then falls back to its original handler. 优先关闭右侧页面。 |
 | `sidechatShortcut` | Command + Option + S opens Side Chat if Better Sidebar provides it. Side Chat 不可用时不影响其他功能。 |
 
@@ -18,10 +18,10 @@ Session numbering includes rendered rows outside the scroll viewport but exclude
 
 ## Install / 安装
 
-Download `dsh-sanshi-ui-enhancements-1.0.0.tgz` from this repository's Releases, then install through the DSH plugin manager or:
+Download `dsh-ui-enhancements-1.0.0.tgz` from this repository's Releases, then install through the DSH plugin manager or:
 
 ```sh
-dsh plugin --profile desktop add /absolute/path/to/dsh-sanshi-ui-enhancements-1.0.0.tgz
+dsh plugin --profile desktop add /absolute/path/to/dsh-ui-enhancements-1.0.0.tgz
 ```
 
 Restart Desktop once. **Do not enable alongside `@local/ui-enhancements` or the former five local UI plugins**: their command/entry IDs intentionally overlap. Disable/remove the old version before installing this replacement. This public source preparation does not change your current installed local version.

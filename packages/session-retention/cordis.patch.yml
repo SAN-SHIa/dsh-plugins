@@ -1,0 +1,8 @@
+- insert:
+    - id: dsh-session-retention
+      name: dsh-session-retention
+      config:
+        archiveAfterDays: 5
+        deleteAfterDays: 14
+        intervalMinutes: 60
+        reportDirectory: !!js "ctx.get('profileContext').dir + '/session-retention'"

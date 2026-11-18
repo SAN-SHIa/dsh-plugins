@@ -1,5 +1,5 @@
 {
-  "name": "dsh-sanshi-deepseek-search",
+  "name": "dsh-deepseek-search",
   "version": "1.0.0",
   "type": "module",
   "description": "Native DeepSeek web search and page extraction with an independent plugin switch.",
@@ -26,7 +26,6 @@
     "test": "node --test test/*.test.js"
   },
   "license": "MIT",
-  "author": "SAN-SHIa",
   "engines": {
     "node": ">=22"
   },

@@ -15,7 +15,7 @@ export function apply(ctx, config) {
   new Intl.DateTimeFormat('en-US', {timeZone: config.timeZone}).format();
   const waitForTurnEnd = createTurnGate(ctx);
   ctx.effect(() => ctx.sessionTitle.register({
-    id: 'sanshi-session-auto-name',
+    id: 'dsh-session-auto-name',
     automatic: 'all-prompts',
     async generate(request) {
       if (request.session.header.origin === 'subagent') throw new Error('Subagent titles are excluded');

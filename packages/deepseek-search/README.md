@@ -1,6 +1,6 @@
 # DSH DeepSeek Search / DeepSeek 搜索
 
-A native DeepSeek Harness plugin exposing `deepseek_web_search` and `deepseek_fetch`, without an MCP child process or third-party runtime dependency. Package: `dsh-sanshi-deepseek-search`. MIT licensed. Target host inspected: DSH `0.2.2-rc.1`.
+A native DeepSeek Harness plugin exposing `deepseek_web_search` and `deepseek_fetch`, without an MCP child process or third-party runtime dependency. Package: `dsh-deepseek-search`. MIT licensed. Target host inspected: DSH `0.2.2-rc.1`.
 
 ## Features / 功能
 
@@ -15,14 +15,14 @@ A native DeepSeek Harness plugin exposing `deepseek_web_search` and `deepseek_fe
 Download the search `.tgz` from this repository's Releases, then use DSH's plugin manager or:
 
 ```sh
-dsh plugin --profile desktop add /absolute/path/to/dsh-sanshi-deepseek-search-1.0.0.tgz
+dsh plugin --profile desktop add /absolute/path/to/dsh-deepseek-search-1.0.0.tgz
 ```
 
 Configure your **own** `DEEPSEEK_SEARCH_API_KEY` in DSH's credential store or launch environment before enabling. An unconfigured plugin fails activation with a missing-key message. Keys are resolved for each call. `.env.example` is a placeholder only: this plugin does not load your project's `.env` file.
 
 If the dedicated key is missing, the plugin can reuse the existing DSH credential named `DEEPSEEK_API_KEY`, copying its value into the dedicated reference. **The public edition disables Codex credential import by default** (`importCodexCredential: false`). It does not read Codex files unless a user explicitly sets this configuration to `true`. Opt-in migration reads only the known MCP environment section in `~/.codex/config.toml`; it does not modify that source file.
 
-**Do not enable alongside `@local/sanshi-deepseek-search` or another plugin registering these same tool names.** Remove/disable the local version before installing this replacement.
+When upgrading, note any custom settings, then disable the old bundle before installing its replacement. Reapply those settings to the `dsh-deepseek-search` entry. Do not enable two plugins that register the same tool names.
 
 ## Privacy, access, and cost / 隐私与费用
 
@@ -36,7 +36,7 @@ From the repository root:
 
 ```sh
 npm ci --ignore-scripts
-npm test --workspace=dsh-sanshi-deepseek-search
+npm test --workspace=dsh-deepseek-search
 npm run pack:plugins
 ```
 

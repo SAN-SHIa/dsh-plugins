@@ -1,7 +1,7 @@
 - id: session-title-llm
   disabled: true
 - insert:
-    - id: sanshi-session-auto-name
+    - id: dsh-session-auto-name
       name: 'dsh-session-auto-name'
       config:
         timeZone: Asia/Shanghai

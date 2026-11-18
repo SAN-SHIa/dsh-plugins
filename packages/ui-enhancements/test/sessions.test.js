@@ -26,10 +26,13 @@ function setup(rows = []) {
     window: {__ModuleLoader__: {load(definition) {
       plugin = definition.factory(() => ({createElement: (...args) => args}));
     }}},
-    document: {querySelectorAll(selector) {
-      assert.match(selector, /data-row-key/);
+    document: {querySelector(selector) {
+      assert.equal(selector, '.kB3qhq_root');
       queryCount++;
-      return rows;
+      return rows && {querySelectorAll(rowSelector) {
+        assert.match(rowSelector, /data-row-key/);
+        return rows;
+      }};
     }},
     getComputedStyle: element => ({visibility: element.visibility}),
   });
@@ -48,12 +51,21 @@ function setup(rows = []) {
   return {commands, cleanup, css: Style()[2], queries: () => queryCount};
 }
 
-test('applies PingFang SC and preserves size and scope', () => {
+test('uses local system faces on sidebar labels without global font overrides', () => {
   const {css} = setup();
-  assert.match(css, /font-family: "PingFang SC"/);
-  assert.match(css, /font-size: 15px/);
-  assert.match(css, /line-height: 22px/);
-  assert.match(css, /JoiKIa_searchResultTitle/);
+  assert.match(css, /--local-sidebar-ui-font: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;/);
+  assert.match(css, /font-weight: 400;/);
+  assert.match(css, /font-weight: 400 !important;/);
+  assert.match(css, /\.JoiKIa_projectRow [^{]+\{\s*line-height: 1\.5/);
+  assert.match(css, /\.kB3qhq_root :is\([^)]*\.JoiKIa_title[^)]*\.JoiKIa_searchResultTitle[^)]*\.JoiKIa_renameInput/);
+  assert.match(css, /font-size: 14px/);
+  assert.match(css, /line-height: 20px/);
+  assert.doesNotMatch(css, /PingFang SC|@font-face|\burl\(|(?:body|html)\s*\{/);
+});
+
+test('deepens only light-theme tree titles without overriding accessibility colors', () => {
+  const {css} = setup();
+  assert.match(css, /@media \(forced-colors: none\) and \(prefers-contrast: no-preference\)\s*\{\s*body:not\(\[data-ds-dark-theme\]\) \.kB3qhq_root \[role="treeitem"\]:not\(\[aria-disabled="true"\]\)\s+:is\(\.JoiKIa_title, \.JoiKIa_searchResultTitle\)\s*\{\s*color: color-mix\(in srgb, currentColor 65%, black\);/);
 });
 
 test('registers three macOS commands without querying on startup', () => {
@@ -136,6 +148,7 @@ test('blocks dialogs but permits the sidebar navigation drawer', () => {
 });
 
 test('handles empty sidebar and detached target safely', () => {
+  assert.equal(setup(null).commands[0].resolve({modal: null}).status, 'blocked');
   assert.equal(setup().commands[0].resolve({modal: null}).status, 'blocked');
   const target = row();
   const result = setup([target]).commands[0].resolve({modal: null});

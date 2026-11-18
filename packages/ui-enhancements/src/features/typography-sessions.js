@@ -1,13 +1,36 @@
 export function createFeature(require) {
     const React = require('react');
-    // Version-specific selectors verified against the installed ui-workspace build.
-    // Scope to session rows: leave project labels, timestamps and conversation alone.
-    const css = '.JoiKIa_sessionRow .JoiKIa_title, .JoiKIa_searchResultRow .JoiKIa_searchResultTitle { font-family: "PingFang SC", -apple-system, BlinkMacSystemFont, sans-serif !important; font-size: 15px !important; line-height: 22px !important; }';
+    // Use the platform UI face for Latin; let the OS pick the matching CJK face.
+    // Size primary labels only, leaving metadata, icons and row geometry alone.
+    const css = `
+      .kB3qhq_root {
+        --local-sidebar-ui-font: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-family: var(--local-sidebar-ui-font) !important;
+        font-weight: 400;
+      }
+      .kB3qhq_root :is(.JoiKIa_title, .JoiKIa_searchResultTitle, .JoiKIa_renameInput, .kB3qhq_panelTitle) {
+        font-family: var(--local-sidebar-ui-font) !important;
+        font-size: 14px !important;
+        line-height: 20px !important;
+        font-weight: 400 !important;
+      }
+      @media (forced-colors: none) and (prefers-contrast: no-preference) {
+        body:not([data-ds-dark-theme]) .kB3qhq_root [role="treeitem"]:not([aria-disabled="true"])
+          :is(.JoiKIa_title, .JoiKIa_searchResultTitle) {
+          color: color-mix(in srgb, currentColor 65%, black);
+        }
+      }
+      .kB3qhq_root .JoiKIa_projectRow :is(.JoiKIa_title, .JoiKIa_renameInput) {
+        line-height: 1.5 !important;
+      }
+    `;
     // Read rendered order only when invoked; no polling or DOM observer.
     // Off-screen rows in the scroll container count, collapsed/hidden rows do not.
     const rowSelector = '[role="treeitem"][data-row-key^="session:"], .JoiKIa_searchResultRow[role="treeitem"]';
     function sessionAt(index) {
-      const rows = document.querySelectorAll(rowSelector);
+      const sidebar = document.querySelector('.kB3qhq_root');
+      if (!sidebar) return null;
+      const rows = sidebar.querySelectorAll(rowSelector);
       let position = 0;
       for (const row of rows) {
         if (!row.isConnected || row.closest('[hidden], [inert], [aria-hidden="true"]')) continue;
@@ -19,7 +42,7 @@ export function createFeature(require) {
       return null;
     }
     function SidebarTypography() {
-      return React.createElement('style', { 'data-local-sidebar-font': '15px' }, css);
+      return React.createElement('style', { 'data-local-sidebar-font': 'system-ui' }, css);
     }
     return {
       inject: ['slots', 'shortcuts', 'locale'],
