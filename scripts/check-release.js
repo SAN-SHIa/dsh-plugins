@@ -10,7 +10,7 @@ for (const dir of await readdir(new URL('packages/', root), {withFileTypes: true
   const manifest = JSON.parse(await readFile(new URL(`packages/${dir.name}/package.json`, root), 'utf8'));
   assert.equal(manifest.name, `dsh-${dir.name}`, 'Use the functional directory name without a personal prefix');
 }
-for (const folder of ['ui-enhancements', 'deepseek-search', 'session-auto-name', 'workspace-drop']) {
+for (const folder of ['ui-enhancements', 'deepseek-search', 'session-auto-name', 'workspace-drop', 'semantic-highlight']) {
   const base = new URL(`packages/${folder}/`, root);
   const manifest = JSON.parse(await readFile(new URL('package.json', base), 'utf8'));
   assert.equal(manifest.license, 'MIT');

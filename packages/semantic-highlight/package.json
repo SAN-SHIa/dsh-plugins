@@ -1,0 +1,43 @@
+{
+  "name": "dsh-semantic-highlight",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Model-marked key points, risks, recommended actions, key steps, and qualifiers rendered as highlighter strokes in assistant replies.",
+  "exports": {
+    ".": "./src/host.js",
+    "./client": "./src/client.js",
+    "./icon": "./icon.svg",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "src/",
+    "cordis.patch.yml",
+    "icon.svg",
+    "locale/*.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-layout",
+        "@deepseek-ai/dsh-client-ui-settings"
+      ]
+    }
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@deepseek-ai/schemastery": "3.18.5"
+  }
+}

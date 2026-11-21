@@ -1,6 +1,6 @@
 # DSH Plugins
 
-Four release packages for **DeepSeek Harness (DSH)**. MIT licensed. This repository does not contain DSH itself, a theme bundle, user credentials, or session data.
+Five release packages for **DeepSeek Harness (DSH)**. MIT licensed. This repository does not contain DSH itself, a theme bundle, user credentials, or session data.
 
 ## Plugins
 
@@ -10,6 +10,9 @@ Four release packages for **DeepSeek Harness (DSH)**. MIT licensed. This reposit
 | [`dsh-ui-enhancements`](packages/ui-enhancements/README.md) | 14 px regular system-font sidebar titles; Command + 1/2/3 session selection; native sidebar glass; local file path tooltips; sidebar-first close; Command + Option + S for Side Chat | DSH Web UI; macOS Desktop for default shortcuts/glass |
 | [`dsh-deepseek-search`](packages/deepseek-search/README.md) | DeepSeek web search and page extraction as native model tools, without an MCP process | DSH host; your own DeepSeek API credential and network access required |
 | [`dsh-session-auto-name`](packages/session-auto-name/README.md) | Update session titles after each conversation turn with a date and current topic | DSH host; uses the session model and may incur additional API charges |
+| [`dsh-semantic-highlight`](packages/semantic-highlight/README.md) | Semantic keyword and sentence highlights, optional bold, and a live enable switch | DSH Web GUI; model-marked emphasis, no automatic recoloring of ordinary bold |
+
+The semantic highlight package is available from source until a release containing its archive is published.
 
 The workspace also contains `dsh-session-retention`, which is not included in the release archives.
 
@@ -65,6 +68,6 @@ dsh plugin --profile desktop remove dsh-session-auto-name
 
 ## Development
 
-Node.js 22 or newer is required. Sources are under `packages/*/src/`; the UI build script generates its checked-in client entry without a third-party bundler. Run `npm run check` before committing. CI checks Node.js 22/24, tests, deterministic client output, and archive creation. Pushing a `v*` tag runs the release workflow and uploads all four archives; releases are not automatically created during local preparation.
+Node.js 22 or newer is required. Sources are under `packages/*/src/`; the UI build script generates its checked-in client entry without a third-party bundler. Run `npm run check` before committing. CI checks Node.js 22/24, tests, deterministic client output, and archive creation. Pushing a `v*` tag runs the release workflow and uploads all five archives; releases are not automatically created during local preparation.
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) for validation and [SECURITY.md](SECURITY.md) for privacy boundaries. The license is [MIT](LICENSE).
